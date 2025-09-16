@@ -27,7 +27,7 @@ netflix_clustering/
 ├─ .gitignore
 ├─ README.md
 └─ requirements.txt
-
+```
 ## Prerequisites
 
 - Python 3.8+ with packages from requirements.txt
@@ -44,7 +44,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 pip install -r requirements.txt
-
+```
 **Windows (PowerShell):**
 ```
 python -m venv .venv
@@ -52,7 +52,7 @@ python -m venv .venv
 ..venv\Scripts\Activate.ps1
 
 python -m pip install -r requirements.txt
-
+```
 ## Dataset Setup
 
 Download the Netflix dataset and place it in the data/ folder:
@@ -66,11 +66,11 @@ Download the Netflix dataset and place it in the data/ folder:
 **Step 1: Run clustering pipeline**
 ```
 python src/main.py
-
+```
 **Step 2: Generate visualizations**
 ```
 python src/visualize.py
-
+```
 **What it produces:**
 - `results/cluster_assignments.csv` - Clustering results with metadata
 - `results/plots/pca_clusters.png` - PCA 2D projection
