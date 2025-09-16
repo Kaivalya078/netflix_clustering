@@ -12,6 +12,7 @@ Unsupervised clustering of Netflix titles using TF-IDF features from textual met
 
 ## Project Structure
 
+```
 netflix_clustering/
 ├─ data/
 │ └─ netflix_titles.csv # Dataset (download from Kaggle)
@@ -37,13 +38,19 @@ netflix_clustering/
 Create a virtual environment and install dependencies:
 
 **macOS/Linux:**
+```
 python3 -m venv .venv
+
 source .venv/bin/activate
+
 pip install -r requirements.txt
 
 **Windows (PowerShell):**
+```
 python -m venv .venv
+
 ..venv\Scripts\Activate.ps1
+
 python -m pip install -r requirements.txt
 
 ## Dataset Setup
@@ -57,9 +64,11 @@ Download the Netflix dataset and place it in the data/ folder:
 ## How to Run
 
 **Step 1: Run clustering pipeline**
+```
 python src/main.py
 
 **Step 2: Generate visualizations**
+```
 python src/visualize.py
 
 **What it produces:**
@@ -74,15 +83,6 @@ python src/visualize.py
 - **Model Selection**: Silhouette score optimization across k=[2,10] on sampled subset
 - **Clustering**: K-Means with multiple initializations (n_init=10) for stability
 - **Visualization**: PCA on full dataset; t-SNE on 1,500-sample subset for performance
-
-## Results (Example Run)
-
-- **Dataset**: 8,807 Netflix titles processed
-- **Features**: 5,030 total (5,000 TF-IDF + 30 one-hot encoded)
-- **Optimal Clusters**: k=2 (highest silhouette score: 0.182)
-- **Cluster Themes**:
-  - **Cluster 0**: TV-focused content (International TV Shows, TV Dramas/Comedies)
-  - **Cluster 1**: Movie-focused content (International Movies, Dramas/Comedies/Documentaries)
 
 ## How It Works
 
