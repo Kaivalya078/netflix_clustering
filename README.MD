@@ -1,103 +1,117 @@
-Netflix Show Clustering
-Unsupervised clustering of Netflix titles using TF‑IDF features from textual metadata and one‑hot encoded categorical attributes. The pipeline selects the number of clusters via silhouette analysis, fits K‑Means, and visualizes results with PCA and t‑SNE.
+# Netflix Show Clustering
 
-Overview
-Text features from director, cast, country, listed_in (genres), description via TF‑IDF.
+Unsupervised clustering of Netflix titles using TF-IDF features from textual metadata and one-hot encoded categorical attributes. The pipeline selects optimal cluster count via silhouette analysis, fits K-Means, and provides PCA and t-SNE visualizations for interpretability.
 
-Categorical features: type, rating, decade (derived from release_year) via one‑hot encoding.
+## Features
 
-Model selection: silhouette scores scanned across k to select cluster count; K‑Means for clustering.
+- **End-to-end clustering pipeline**: Load, clean, engineer features, select k, cluster, and export results with a single command.
+- **Robust feature engineering**: TF-IDF on combined text (director, cast, country, genres, description) + one-hot encoding for categorical data.
+- **Automated model selection**: Silhouette analysis across k=[2,10] to choose optimal cluster count.
+- **Rich visualizations**: PCA for linear projection and t-SNE for non-linear neighborhood structure.
+- **Clean output**: CSV assignments and high-DPI PNG plots saved to results/ folder.
 
-Visualization: PCA (linear) and t‑SNE (non‑linear) 2D embeddings.
+## Project Structure
 
-Project Structure
-src/main.py — load, clean, feature engineering, k‑selection, clustering, summary, CSV export.
+netflix_clustering/
+├─ data/
+│ └─ netflix_titles.csv # Dataset (download from Kaggle)
+├─ results/
+│ ├─ cluster_assignments.csv # Output with title, type, rating, release_year, cluster
+│ └─ plots/ # Generated visualizations
+│ ├─ pca_clusters.png # PCA 2D projection
+│ └─ tsne_clusters.png # t-SNE 2D projection
+├─ src/
+│ ├─ main.py # End-to-end pipeline
+│ └─ visualize.py # Generate PCA and t-SNE plots
+├─ .gitignore
+├─ README.md
+└─ requirements.txt
 
-src/visualize.py — rebuild features, merge cluster labels, render PCA and t‑SNE plots.
+## Prerequisites
 
-data/netflix_titles.csv — dataset CSV (download and place here).
+- Python 3.8+ with packages from requirements.txt
+- Netflix Movies and TV Shows dataset from Kaggle
 
-results/cluster_assignments.csv — output with title, type, rating, release_year, cluster.
+## Installation
 
-results/plots/pca_clusters.png, results/plots/tsne_clusters.png — generated figures.
+Create a virtual environment and install dependencies:
 
-Setup
-Windows PowerShell:
-
-python -m venv .venv
-
-.venv\Scripts\Activate.ps1
-
-python -m pip install -U pip
-
+**macOS/Linux:**
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 
-Dataset:
+**Windows (PowerShell):**
+python -m venv .venv
+..venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 
-Download from Kaggle (Netflix Movies and TV Shows by Shivam Bansal) and save as data/netflix_titles.csv.
+## Dataset Setup
 
-Usage
-Run clustering (writes cluster assignments and prints summary):
+Download the Netflix dataset and place it in the data/ folder:
 
+1. Visit [Kaggle: Netflix Movies and TV Shows](https://www.kaggle.com/datasets/shivamb/netflix-shows)
+2. Download `netflix_titles.csv`
+3. Save as `data/netflix_titles.csv`
+
+## How to Run
+
+**Step 1: Run clustering pipeline**
 python src/main.py
 
-Generate visualizations:
-
+**Step 2: Generate visualizations**
 python src/visualize.py
 
-Outputs:
+**What it produces:**
+- `results/cluster_assignments.csv` - Clustering results with metadata
+- `results/plots/pca_clusters.png` - PCA 2D projection
+- `results/plots/tsne_clusters.png` - t-SNE 2D visualization
 
-results/cluster_assignments.csv
+## Methodology
 
-results/plots/pca_clusters.png
+- **Text Features**: TF-IDF with 5,000 max features, English stop-words, bigrams, min_df=2, max_df=0.8
+- **Categorical Features**: One-hot encoding for type, rating, and release decade
+- **Model Selection**: Silhouette score optimization across k=[2,10] on sampled subset
+- **Clustering**: K-Means with multiple initializations (n_init=10) for stability
+- **Visualization**: PCA on full dataset; t-SNE on 1,500-sample subset for performance
 
-results/plots/tsne_clusters.png
+## Results (Example Run)
 
-Methodology
-TF‑IDF: max_features=5000, English stop‑words, ngram_range=(1,2), min_df=2, max_df=0.8.
+- **Dataset**: 8,807 Netflix titles processed
+- **Features**: 5,030 total (5,000 TF-IDF + 30 one-hot encoded)
+- **Optimal Clusters**: k=2 (highest silhouette score: 0.182)
+- **Cluster Themes**:
+  - **Cluster 0**: TV-focused content (International TV Shows, TV Dramas/Comedies)
+  - **Cluster 1**: Movie-focused content (International Movies, Dramas/Comedies/Documentaries)
 
-One‑hot encoding: type, rating, decade with handle_unknown="ignore".
+## How It Works
 
-K selection: silhouette score on a sampled subset; choose k with highest score.
+- `src/main.py` orchestrates the full pipeline: data loading, cleaning, TF-IDF vectorization, one-hot encoding, feature stacking, silhouette-based k-selection, K-Means clustering, and results export.
+- `src/visualize.py` rebuilds the feature matrix consistently, merges cluster assignments, and generates PCA/t-SNE plots with proper sampling for performance.
+- Results are saved to `results/` with both tabular assignments (CSV) and visual summaries (PNG).
 
-K‑Means: n_init=10 on sparse features.
+## Customization
 
-Visualization: PCA on dense array; t‑SNE on a random sample for performance.
+- **Adjust cluster range**: Modify `--kmin` and `--kmax` arguments in main.py
+- **Change feature limits**: Edit TF-IDF `max_features` parameter for vocabulary size
+- **Sampling for visualization**: Adjust `sample_cap` in t-SNE generation for speed/quality tradeoffs
+- **Additional plots**: Extend visualize.py with custom matplotlib/seaborn charts
 
-Results (example)
-Rows processed: 8,807
+## Reproducibility
 
-Features: 5,030 total (5,000 TF‑IDF + 30 one‑hot)
+- Fixed random seeds (42) ensure consistent results across runs
+- Compatible with Python 3.8-3.13 and recent scikit-learn/pandas versions
+- All dependencies pinned in requirements.txt for environment consistency
 
-Selected clusters: k = 2 (highest silhouette)
+## Acknowledgments
 
-Themes:
-
-Cluster 0: TV‑heavy grouping (International TV Shows, TV Dramas/Comedies)
-
-Cluster 1: Movie‑heavy grouping (International Movies, Dramas/Comedies/Documentaries)
-
-Citations
-Kaggle Dataset: https://www.kaggle.com/datasets/shivamb/netflix-shows
-
-scikit‑learn TfidfVectorizer: https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
-
-scikit‑learn Feature Extraction (text): https://scikit-learn.org/stable/modules/feature_extraction.html
-
-scikit‑learn OneHotEncoder: https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html
-
-scikit‑learn Silhouette Score (API): https://scikit-learn.org/stable/modules/generated/sklearn.metrics.silhouette_score.html
-
-Silhouette Analysis Example: https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
-
-scikit‑learn PCA (API): https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
-
-scikit‑learn t‑SNE (API): https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
-
-scikit‑learn Clustering Guide: https://scikit-learn.org/stable/modules/clustering.html
-
-VS Code Python (docs): https://code.visualstudio.com/docs/languages/python
+- **Dataset**: Netflix Movies and TV Shows by Shivam Bansal (Kaggle)
+- **Built with**: scikit-learn, pandas, matplotlib, seaborn, scipy, numpy
 
 
-Acknowledgements
-Thanks to scikit‑learn maintainers and the Kaggle community.
+## Citations
+
+- [Kaggle Dataset](https://www.kaggle.com/datasets/shivamb/netflix-shows)
+- [scikit-learn Documentation](https://scikit-learn.org/stable/)
+- [TF-IDF Guide](https://scikit-learn.org/stable/modules/feature_extraction.html)
+- [Silhouette Analysis](https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html)
